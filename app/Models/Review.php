@@ -12,6 +12,7 @@ class Review extends Model
         'employee_id',
         'value',
         'notes',
+        'phone'
     ];
 
     public function employee(): BelongsTo

@@ -142,9 +142,9 @@ class EmployeeController extends Controller
     }
 
     // Branch employees
-    public function employees_branch(string $id)
+    public function employees_branch(string $id, string $p_id)
     {
-        $employees = Employee::where('branch_id', $id)->where('is_active', true)->get();
+        $employees = Employee::where('branch_id', $id)->where('position_id', $p_id)->where('is_active', true)->get();
 
         return response()->json(['data' => $employees], 200);
     }

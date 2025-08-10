@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Schema;
 
 class PositionController extends Controller
 {
+    public function all()
+    {
+        $positions = Position::with('employees')->get();
+
+        return response()->json(['data' => $positions]);
+    }
+
+
     public function index(Request $request)
     {
         $query = Position::query();
@@ -63,7 +71,7 @@ class PositionController extends Controller
 
     public function Show(string $id)
     {
-        $position = Position::findOrFail($id);
+        $position = Position::with('employees')->findOrFail($id);
 
         return response()->json(['data' => $position]);
     }

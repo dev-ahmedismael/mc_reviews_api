@@ -26,7 +26,8 @@ class ReviewRequest extends FormRequest
             'branch_id' => 'integer|required',
             'value' => 'integer|required',
             'employee_code' => ['required', 'string', Rule::exists('employees', 'code')],
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'phone' => 'required|string'
         ];
     }
 

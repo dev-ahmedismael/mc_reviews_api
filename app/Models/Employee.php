@@ -13,7 +13,8 @@ class Employee extends Model
         'branch_id',
         'name',
         'job_id',
-        'code'
+        'code',
+        'position_id'
     ];
 
     public function reviews(): HasMany

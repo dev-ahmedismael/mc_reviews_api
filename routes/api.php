@@ -9,7 +9,8 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-
+use App\Exports\ReviewsByPositionExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 Route::middleware('api')->group(function () {
@@ -19,8 +20,14 @@ Route::middleware('api')->group(function () {
     Route::get('offers/all', [OfferController::class, 'all']);
     Route::apiResource('posts', PostController::class)->only('index');
     Route::apiResource('categories', CategoryController::class)->only('index');
-    Route::get('employees/branch/{id}', [EmployeeController::class, 'employees_branch']);
+    Route::get('employees/branch/{id}/{p_id}', [EmployeeController::class, 'employees_branch']);
     Route::apiResource('positions', PositionController::class)->only('index');
+    Route::get('positions/all', [PositionController::class, 'all']);
+    Route::get('/reviews/export/position/{id}', function ($id) {
+        return Excel::download(new ReviewsByPositionExport($id), "reviews_position_{$id}.xlsx");
+    });
+    Route::apiResource('reviews', ReviewController::class);
+
 
     Route::middleware('auth:api')->group(function () {
         Route::get('authenticated-user', [UserController::class, 'authenticated_user']);
@@ -35,7 +42,8 @@ Route::middleware('api')->group(function () {
         Route::get('employees/all', [EmployeeController::class, 'all']);
         Route::post('employees/filter', [EmployeeController::class, 'filter']);
         Route::apiResource('employees', EmployeeController::class);
-        Route::apiResource('reviews', ReviewController::class);
+        Route::get('reviews/position/{id}', [ReviewController::class, 'review_position']);
+
         Route::get('stats', [ReviewController::class, 'stats']);
         Route::apiResource('users', UserController::class);
         Route::apiResource('positions', PositionController::class)->except('index');

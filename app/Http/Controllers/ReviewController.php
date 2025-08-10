@@ -16,48 +16,60 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index(Request $request)
-{
-    $perPage = $request->filled('per_page') ? (int) $request->per_page : 10;
-    $search = $request->input('search');
+    public function index(Request $request)
+    {
+        $perPage = $request->filled('per_page') ? (int) $request->per_page : 10;
+        $search = $request->input('search');
 
-    $translateValue = fn($value) => match ($value) {
-        1 => 'غير راضي',
-        2 => 'محايد',
-        3 => 'راضي',
-        4 => 'راضي جدا',
-        default => 'غير محدد',
-    };
+        $translateValue = fn($value) => match ($value) {
+            1 => 'غير راضي',
+            2 => 'محايد',
+            3 => 'راضي',
+            4 => 'راضي جدا',
+            default => 'غير محدد',
+        };
 
-    $reviews = Review::with(['branch', 'employee'])
-        ->when($search, function ($query) use ($search) {
-            $query->whereHas('branch', fn($q) => $q->where('name', 'like', "%$search%"))
-                ->orWhereHas('employee', fn($q) => $q->where('name', 'like', "%$search%"))
-                ->orWhere('notes', 'like', "%$search%");
-        })
-        ->latest()
-        ->paginate($perPage);
+        $reviews = Review::with(['branch', 'employee'])
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('branch', fn($q) => $q->where('name', 'like', "%$search%"))
+                    ->orWhereHas('employee', fn($q) => $q->where('name', 'like', "%$search%"))
+                    ->orWhere('notes', 'like', "%$search%");
+            })
+            ->latest()
+            ->paginate($perPage);
 
-    $formatted = $reviews->getCollection()->map(function ($review) use ($translateValue) {
-        return [
-            'branch_name' => optional($review->branch)->name,
-            'employee_name' => optional($review->employee)->name,
-            'value' => $translateValue($review->value),
-            'notes' => $review->notes,
-            'created_at' => $review->created_at->setTimezone('Asia/Riyadh')->toDateTimeString(),
-        ];
-    });
+        $formatted = $reviews->getCollection()->map(function ($review) use ($translateValue) {
+            return [
+                'branch_name' => optional($review->branch)->name,
+                'employee_name' => optional($review->employee)->name,
+                'value' => $translateValue($review->value),
+                'notes' => $review->notes,
+                'created_at' => $review->created_at->setTimezone('Asia/Riyadh')->toDateTimeString(),
+            ];
+        });
 
-    return response()->json([
-        'data' => $formatted,
-        'meta' => [
-            'current_page' => $reviews->currentPage(),
-            'last_page' => $reviews->lastPage(),
-            'per_page' => $reviews->perPage(),
-            'total' => $reviews->total(),
-        ],
-    ]);
-}
+        return response()->json([
+            'data' => $formatted,
+            'meta' => [
+                'current_page' => $reviews->currentPage(),
+                'last_page' => $reviews->lastPage(),
+                'per_page' => $reviews->perPage(),
+                'total' => $reviews->total(),
+            ],
+        ]);
+    }
+
+
+    public function review_position(string $id)
+    {
+        $reviews = Review::with(['branch', 'employee'])
+            ->whereHas('employee', function ($query) use ($id) {
+                $query->where('position_id', $id);
+            })
+            ->paginate(10);
+
+        return response()->json($reviews);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -70,7 +82,7 @@ class ReviewController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-        public function store(ReviewRequest $request)
+    public function store(ReviewRequest $request)
     {
         $review = $request->validated();
 

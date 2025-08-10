@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://masters-clinic.com', 'https://www.masters-clinic.com', 'https://admin.masters-clinic.com', 'https://tv.masters-clinic.com'],
+    'allowed_origins' => ['https://masters-clinic.com', 'https://www.masters-clinic.com', 'https://admin.masters-clinic.com', 'https://tv.masters-clinic.com', '*'],
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +29,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false
 
 ];

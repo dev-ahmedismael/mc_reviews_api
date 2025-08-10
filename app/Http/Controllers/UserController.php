@@ -22,17 +22,18 @@ class UserController extends Controller
             return response()->json(['message' => 'كلمة المرور غير صحيحة.'], 401);
         }
 
-        Auth::login($user);
-
-        return response()->json(['message' => 'تم تسجيل الدخول بنجاح.'], 200);
+        $token = auth()->login($user);
+        return response()->json([
+            'message' => 'تم تسجيل الدخول بنجاح.',
+            'token'   => $token,
+        ], 200);
     }
 
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        Auth::guard('api')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+
 
         return response()->json(['message' => 'تم تسجيل الخروج بنجاح.']);
     }

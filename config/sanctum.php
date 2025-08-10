@@ -17,7 +17,7 @@ return [
 
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
         '%s%s',
-        'masters-clinic.com,admin.masters-clinic.com,tv.masters-clinic.com,www.masters-clinic.com,127.0.0.1,127.0.0.1:8000,::1',
+        'masters-clinic.com,admin.masters-clinic.com,tv.masters-clinic.com,www.masters-clinic.com,127.0.0.1,127.0.0.1:8000,::1,localhost:4200',
         Sanctum::currentApplicationUrlWithPort()
     ))),
 
